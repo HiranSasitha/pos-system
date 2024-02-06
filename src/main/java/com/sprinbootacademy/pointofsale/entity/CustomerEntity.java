@@ -44,6 +44,6 @@ public class CustomerEntity {
     @Type(type = "json")
     @Column(name = "contact_numbers",columnDefinition = "json")
     private ArrayList contactNumber;
-    @Column(name = "active_state",columnDefinition = "TINYINT default 1")
+    @Column(name = "active_state",columnDefinition = "TINYINT default 0")
     private Boolean active;
 }
