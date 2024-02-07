@@ -12,10 +12,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 
 @Entity
@@ -33,6 +30,7 @@ public class CustomerEntity {
 
     @Id
     @Column(name = "customer_id",length = 45)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer customerId;
     @Column(name = "customer_name",length = 100)
     private  String customerName;
