@@ -3,9 +3,12 @@ package com.sprinbootacademy.pointofsale.service.impl;
 import com.sprinbootacademy.pointofsale.dto.CustomerDto;
 import com.sprinbootacademy.pointofsale.dto.UpdateCustomerDto;
 import com.sprinbootacademy.pointofsale.entity.CustomerEntity;
+import com.sprinbootacademy.pointofsale.exception.NotFoundException;
 import com.sprinbootacademy.pointofsale.repo.CustomerRepository;
 import com.sprinbootacademy.pointofsale.service.CustomerService;
+import com.sprinbootacademy.pointofsale.util.mappers.CustomerMapper;
 import com.sun.jdi.PrimitiveValue;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +22,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Override
     public String saveCustomer(CustomerDto customerDto) {
-        CustomerEntity customerEntity = new CustomerEntity(customerDto.getCustomerId(),
-                customerDto.getCustomerName(),
-                customerDto.getCustomerAddress(),
-                customerDto.getCustomerSlary(),
-                customerDto.getContactNumber(),
-                customerDto.getActive());
+        CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
         customerRepository.save(customerEntity);
 
         return "save";
@@ -35,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public String updateCustomer(UpdateCustomerDto updateCustomerDto) {
-        if(customerRepository.existsById(updateCustomerDto.getCustomerId())){
+        if (customerRepository.existsById(updateCustomerDto.getCustomerId())) {
             CustomerEntity customerEntity = customerRepository.getReferenceById(updateCustomerDto.getCustomerId());
             customerEntity.setCustomerName(updateCustomerDto.getCustomerName());
             customerEntity.setCustomerAddress(updateCustomerDto.getCustomerAddress());
@@ -43,8 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             customerRepository.save(customerEntity);
             return "updated";
-        }
-        else {
+        } else {
             throw new RuntimeException("not fOund");
         }
 
@@ -52,17 +53,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDto getById(Integer id) {
-        if(customerRepository.existsById(id)) {
+        if (customerRepository.existsById(id)) {
 
             CustomerEntity customerEntity = customerRepository.getReferenceById(id);
-            CustomerDto customerDto = new CustomerDto(customerEntity.getCustomerId(),
-                    customerEntity.getCustomerName(),
-                    customerEntity.getCustomerAddress(),
-                    customerEntity.getCustomerSlary(),
-                    customerEntity.getContactNumber(),
-                    customerEntity.getActive());
+            CustomerDto customerDto = modelMapper.map(customerEntity, CustomerDto.class);
             return customerDto;
-        }else {
+        } else {
             throw new RuntimeException("invalid id");
         }
     }
@@ -71,19 +67,16 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerDto> getAllCustomer() {
         List<CustomerEntity> customerEntities = customerRepository.findAll();
 
-        List<CustomerDto> customerDtos = new ArrayList<>();
+        if (customerEntities.size() > 0) {
+            List<CustomerDto> customerDtos = customerMapper.entityListToDtoList(customerEntities);
 
-        for(CustomerEntity customerEntity:customerEntities){
-            CustomerDto customerDto = new CustomerDto(customerEntity.getCustomerId(),
-                    customerEntity.getCustomerName(),
-                    customerEntity.getCustomerAddress(),
-                    customerEntity.getCustomerSlary(),
-                    customerEntity.getContactNumber(),
-                    customerEntity.getActive());
 
-            customerDtos.add(customerDto);
+            return customerDtos;
+        }else {
+            throw new NotFoundException("No Customer Found");
         }
-return customerDtos;
+
+
     }
 
     @Override
@@ -96,18 +89,9 @@ return customerDtos;
     public List<CustomerDto> getCustomerByStatus(Boolean isActive) {
         List<CustomerEntity> customerEntities = customerRepository.findAllByActiveEquals(isActive);
 
-        List<CustomerDto> customerDtos = new ArrayList<>();
+        List<CustomerDto> customerDtos = customerMapper.entityListToDtoList(customerEntities);
 
-        for(CustomerEntity customerEntity:customerEntities){
-            CustomerDto customerDto = new CustomerDto(customerEntity.getCustomerId(),
-                    customerEntity.getCustomerName(),
-                    customerEntity.getCustomerAddress(),
-                    customerEntity.getCustomerSlary(),
-                    customerEntity.getContactNumber(),
-                    customerEntity.getActive());
 
-            customerDtos.add(customerDto);
-        }
         return customerDtos;
     }
 }

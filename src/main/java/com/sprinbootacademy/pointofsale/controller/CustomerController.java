@@ -3,7 +3,10 @@ package com.sprinbootacademy.pointofsale.controller;
 import com.sprinbootacademy.pointofsale.dto.CustomerDto;
 import com.sprinbootacademy.pointofsale.dto.UpdateCustomerDto;
 import com.sprinbootacademy.pointofsale.service.CustomerService;
+import com.sprinbootacademy.pointofsale.util.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +20,14 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping("/save")
-    public String saveCustomer(@RequestBody CustomerDto customerDto) {
+    public ResponseEntity<?> saveCustomer(@RequestBody CustomerDto customerDto) {
         customerService.saveCustomer(customerDto);
         String massage = "Saved";
-        return massage;
+        return new ResponseEntity<StandardResponse>(
+                new StandardResponse(201, "success", massage),
+                HttpStatus.CREATED
+
+        );
     }
 
     @PutMapping("/update")
@@ -35,8 +42,13 @@ public class CustomerController {
     }
 
     @GetMapping("/get-all")
-    public List<CustomerDto> getAll() {
-        return customerService.getAllCustomer();
+    public ResponseEntity<?> getAll() {
+        List<CustomerDto> customerDtos = customerService.getAllCustomer();
+        return new ResponseEntity<StandardResponse>(
+                new StandardResponse(200, "success", customerDtos),
+                HttpStatus.OK
+
+        );
     }
 
 
