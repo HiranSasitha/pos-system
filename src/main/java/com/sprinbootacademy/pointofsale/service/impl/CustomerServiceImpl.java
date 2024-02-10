@@ -105,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(customerEntities.getSize()>0){
             return new PaginatedResponseCustomerDto(customerDtos,customerRepository.countAllByActiveEquals(isActive));
         }else {
-            throw new NotFoundException("No Data");
+            throw new NotFoundException("No Customer Data");
         }
     }
 }
