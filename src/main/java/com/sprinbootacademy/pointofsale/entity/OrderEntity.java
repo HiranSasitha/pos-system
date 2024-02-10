@@ -37,6 +37,9 @@ public class OrderEntity {
     @JoinColumn(name = "customer_id",nullable = false)
     private CustomerEntity customerEntity;
 
+    @Column(name = "active_state",columnDefinition = "TINYINT default 0")
+    private Boolean active;
+
     @OneToMany(mappedBy = "orderEntity")
     private Set<OrderDetailsEntity> orderDetailsEntities;
 }

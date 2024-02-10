@@ -19,18 +19,17 @@ import java.util.Date;
 public class RequestOrderDetailsDto {
 
 
-    private  String itemName;
+    private String itemName;
 
+    private Double qty;
 
-    private  Double qty;
-
-
-    private  Double amount;
+    private Double amount;
 
     private Integer itemId;
 
-
     private Integer orderId;
+
+
 
 
 }

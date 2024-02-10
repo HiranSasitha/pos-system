@@ -1,7 +1,10 @@
 package com.sprinbootacademy.pointofsale.service.impl;
 
+import com.sprinbootacademy.pointofsale.dto.paginated.PaginatedResponseOrderDetailsDto;
+import com.sprinbootacademy.pointofsale.dto.queryInterfaces.OrderDetailsInterface;
 import com.sprinbootacademy.pointofsale.dto.request.RequestOrderDetailsDto;
 import com.sprinbootacademy.pointofsale.dto.request.RequestOrderSaveDto;
+import com.sprinbootacademy.pointofsale.dto.response.ResponseOrderDetailsDto;
 import com.sprinbootacademy.pointofsale.entity.OrderDetailsEntity;
 import com.sprinbootacademy.pointofsale.entity.OrderEntity;
 import com.sprinbootacademy.pointofsale.repo.CustomerRepository;
@@ -9,8 +12,10 @@ import com.sprinbootacademy.pointofsale.repo.ItemRepository;
 import com.sprinbootacademy.pointofsale.repo.OrderDetailsRepo;
 import com.sprinbootacademy.pointofsale.repo.OrderRepo;
 import com.sprinbootacademy.pointofsale.service.OrderService;
+import com.sprinbootacademy.pointofsale.util.mappers.OrderMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     private ItemRepository itemRepository;
     @Autowired
     private OrderDetailsRepo orderDetailsRepo;
+    @Autowired
+    private OrderMapper orderMapper;
     @Override
     @Transactional
     public String SaveOrder(RequestOrderSaveDto requestOrderSaveDto) {
@@ -60,5 +67,13 @@ public class OrderServiceImpl implements OrderService {
         }
 
         throw new RuntimeException("Not Save");
+    }
+
+    @Override
+    public PaginatedResponseOrderDetailsDto getAllOrderDetails(boolean status, Integer page, Integer size) {
+        List<OrderDetailsInterface>orderDetailsInterfaces = orderRepo.getAllOrderDtails(status, PageRequest.of(page,size));
+       List<ResponseOrderDetailsDto> orderDetailsDtos = orderMapper.interfaceListToDtoList(orderDetailsInterfaces);
+
+        return new PaginatedResponseOrderDetailsDto(orderDetailsDtos,orderRepo.countAllOrdrDetails(status));
     }
 }
