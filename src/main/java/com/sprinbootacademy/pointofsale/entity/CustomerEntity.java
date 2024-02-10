@@ -14,6 +14,7 @@ import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Entity
 @Table(name = "customer")
@@ -44,4 +45,7 @@ public class CustomerEntity {
     private ArrayList contactNumber;
     @Column(name = "active_state",columnDefinition = "TINYINT default 0")
     private Boolean active;
+
+    @OneToMany(mappedBy = "customerEntity")
+    private Set<OrderEntity>orderEntities;
 }
