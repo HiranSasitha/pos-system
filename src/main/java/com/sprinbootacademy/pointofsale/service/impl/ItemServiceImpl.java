@@ -1,6 +1,7 @@
 package com.sprinbootacademy.pointofsale.service.impl;
 
 import com.sprinbootacademy.pointofsale.dto.ItemSaveRequestDto;
+import com.sprinbootacademy.pointofsale.dto.paginated.PaginatedResponseItemDto;
 import com.sprinbootacademy.pointofsale.dto.response.ItemResponseDto;
 import com.sprinbootacademy.pointofsale.entity.ItemEntity;
 import com.sprinbootacademy.pointofsale.exception.NotFoundException;
@@ -11,6 +12,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponseDto> getAllItemActiveStatus(Boolean active,Integer page,Integer size) {
+    public List<ItemResponseDto> getAllItemActiveStatus(Boolean active) {
         List<ItemEntity>itemEntities = itemRepository.findAllByActiveEquals(active);
         if(itemEntities.size()>0){
             List<ItemResponseDto>itemResponseDtos = itemMapper.entityListToDtoList(itemEntities);
@@ -70,5 +73,20 @@ public class ItemServiceImpl implements ItemService {
         }else {
             throw new NotFoundException("Not Active Items");
         }
+    }
+
+    @Override
+    public PaginatedResponseItemDto getAllItemByActiveWithPaginated(Boolean active, Integer page, Integer size) {
+        Page<ItemEntity> items = itemRepository.findAllByActiveEquals(active, PageRequest.of(page,size));
+        Integer count = itemRepository.countAllByActiveEquals(active);
+        if(items.getSize()<1){
+            throw new NotFoundException("No data");
+
+        }
+        PaginatedResponseItemDto paginatedResponseItemDto = new PaginatedResponseItemDto(
+                itemMapper.pageToDtoList(items), count.longValue()
+        );
+
+        return paginatedResponseItemDto;
     }
 }

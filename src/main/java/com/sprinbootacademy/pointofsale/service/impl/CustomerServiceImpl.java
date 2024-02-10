@@ -2,6 +2,7 @@ package com.sprinbootacademy.pointofsale.service.impl;
 
 import com.sprinbootacademy.pointofsale.dto.CustomerDto;
 import com.sprinbootacademy.pointofsale.dto.UpdateCustomerDto;
+import com.sprinbootacademy.pointofsale.dto.paginated.PaginatedResponseCustomerDto;
 import com.sprinbootacademy.pointofsale.entity.CustomerEntity;
 import com.sprinbootacademy.pointofsale.exception.NotFoundException;
 import com.sprinbootacademy.pointofsale.repo.CustomerRepository;
@@ -10,6 +11,8 @@ import com.sprinbootacademy.pointofsale.util.mappers.CustomerMapper;
 import com.sun.jdi.PrimitiveValue;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -93,5 +96,16 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         return customerDtos;
+    }
+
+    @Override
+    public PaginatedResponseCustomerDto getAllCustomerByActiveWithPaginated(Boolean isActive, Integer page, Integer size) {
+        Page<CustomerEntity>customerEntities = customerRepository.findAllByActiveEquals(isActive, PageRequest.of(page,size));
+        List<CustomerDto> customerDtos=customerMapper.pageListToDtoList(customerEntities);
+        if(customerEntities.getSize()>0){
+            return new PaginatedResponseCustomerDto(customerDtos,customerRepository.countAllByActiveEquals(isActive));
+        }else {
+            throw new NotFoundException("No Data");
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.sprinbootacademy.pointofsale.service;
 
 import com.sprinbootacademy.pointofsale.dto.ItemSaveRequestDto;
+import com.sprinbootacademy.pointofsale.dto.paginated.PaginatedResponseItemDto;
 import com.sprinbootacademy.pointofsale.dto.response.ItemResponseDto;
 import org.springframework.stereotype.Service;
 
@@ -15,5 +16,7 @@ public interface ItemService {
 
     List<ItemResponseDto> getByNameOnly(String name);
 
-    List<ItemResponseDto> getAllItemActiveStatus(Boolean active,Integer page,Integer size);
+    List<ItemResponseDto> getAllItemActiveStatus(Boolean active);
+
+    PaginatedResponseItemDto getAllItemByActiveWithPaginated(Boolean active, Integer page, Integer size);
 }

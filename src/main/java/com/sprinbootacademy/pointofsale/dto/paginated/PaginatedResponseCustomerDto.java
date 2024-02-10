@@ -1,6 +1,6 @@
 package com.sprinbootacademy.pointofsale.dto.paginated;
 
-import com.sprinbootacademy.pointofsale.dto.response.ItemResponseDto;
+import com.sprinbootacademy.pointofsale.dto.CustomerDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 
-public class PaginatedResponseItemDto {
-    List<ItemResponseDto> list;
-    private Long dataCount;
+public class PaginatedResponseCustomerDto {
+
+    List<CustomerDto> list;
+    private  Long count;
+
 }

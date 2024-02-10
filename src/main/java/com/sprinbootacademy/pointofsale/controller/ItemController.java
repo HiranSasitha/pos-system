@@ -3,6 +3,7 @@ package com.sprinbootacademy.pointofsale.controller;
 
 import com.sprinbootacademy.pointofsale.dto.CustomerDto;
 import com.sprinbootacademy.pointofsale.dto.ItemSaveRequestDto;
+import com.sprinbootacademy.pointofsale.dto.paginated.PaginatedResponseItemDto;
 import com.sprinbootacademy.pointofsale.dto.response.ItemResponseDto;
 import com.sprinbootacademy.pointofsale.service.ItemService;
 import com.sprinbootacademy.pointofsale.util.StandardResponse;
@@ -44,11 +45,12 @@ public class ItemController {
 
     @GetMapping(value = "/get-by-All-items-active",
     params = {"active","page","size"})
-    public ResponseEntity<?>getByNameAndActive(@RequestParam(value = "active") Boolean active,@RequestParam(value = "page") Integer page,@RequestParam(value = "size") Integer size){
-        List<ItemResponseDto>itemResponseDtos = itemService.getAllItemActiveStatus(active,page,size);
+    public ResponseEntity<?>getByNameAndActive(@RequestParam(value = "active") Boolean active,@RequestParam(value = "page") Integer page,@RequestParam(value = "size")  Integer size){
+       // List<ItemResponseDto>itemResponseDtos = itemService.getAllItemActiveStatus(active);
+        PaginatedResponseItemDto paginatedResponseItemDto = itemService.getAllItemByActiveWithPaginated(active,page,size);
         return new ResponseEntity<StandardResponse>(
-                new StandardResponse(200,"success",itemResponseDtos),
-                HttpStatus.CREATED
+                new StandardResponse(200,"success",paginatedResponseItemDto),
+                HttpStatus.OK
 
         );
 

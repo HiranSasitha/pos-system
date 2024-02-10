@@ -2,6 +2,7 @@ package com.sprinbootacademy.pointofsale.controller;
 
 import com.sprinbootacademy.pointofsale.dto.CustomerDto;
 import com.sprinbootacademy.pointofsale.dto.UpdateCustomerDto;
+import com.sprinbootacademy.pointofsale.dto.paginated.PaginatedResponseCustomerDto;
 import com.sprinbootacademy.pointofsale.service.CustomerService;
 import com.sprinbootacademy.pointofsale.util.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +61,13 @@ public class CustomerController {
     }
 
 
-    @GetMapping("/get-all-customer/{status}")
-    public List<CustomerDto> getCustomerByStatus(@PathVariable(value = "status") Boolean isActive) {
-        return customerService.getCustomerByStatus(isActive);
+    @GetMapping( value = "/get-all-customer-paginated/{status}",
+            params = {"page","size"}
+    )
+    public ResponseEntity<?> getCustomerByStatus(@PathVariable(value = "status") Boolean isActive,
+                                                 @RequestParam(value = "page") Integer page,@RequestParam(value = "size") Integer size) {
+        //return customerService.getCustomerByStatus(isActive);
+        PaginatedResponseCustomerDto paginatedResponseCustomerDto = customerService.getAllCustomerByActiveWithPaginated(isActive,page,size);
+        return new ResponseEntity<StandardResponse>(new StandardResponse(200,"success",paginatedResponseCustomerDto),HttpStatus.OK);
     }
 }
